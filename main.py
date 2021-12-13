@@ -14,7 +14,9 @@ inline_limit = 20
 
 @bot.message_handler(commands=['help'])
 async def bot_handle_help(message):
-	await bot.send_message(message.chat.id, 'Use /tracks command to search for free music on <a href="https://www.jamendo.com/">Jamendo</a>. Use /tracks <code>name</code> to filter your search.', disable_web_page_preview=True, parse_mode='HTML')
+	keyboard = types.InlineKeyboardMarkup()
+	keyboard.row(types.InlineKeyboardButton(f"Search inline", switch_inline_query=''))
+	await bot.send_message(message.chat.id, 'Use /tracks command to search for free music on <a href="https://www.jamendo.com/">Jamendo</a>. Use /tracks <code>name</code> to filter your search. You can do the same in an inline search from any chat you want and share the music.', disable_web_page_preview=True, parse_mode='HTML', reply_markup=keyboard)
 	
 
 @bot.message_handler(commands=['start'])
