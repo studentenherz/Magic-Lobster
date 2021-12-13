@@ -12,7 +12,8 @@ async def close_session():
 async def search_tracks(offset = 0, limit = 10, name = None):
 	params = {'client_id': CLIENT_ID, 'format': 'json', 'offset' : offset, 'imagesize': 600, 'limit' : limit}
 	if name:
-		params['name'] = name
+		if len(name) > 0:
+			params['name'] = name
 	async with session.get('https://api.jamendo.com/v3.0/tracks/', params=params) as response:
 		if response.status == 200:
 			json = await response.json()

@@ -9,6 +9,7 @@ from jamendo_requests import create_session, close_session, search_tracks, get_a
 bot = AsyncTeleBot(BOT_TOKEN)
 
 limit = 6
+inline_limit = 20
 
 
 @bot.message_handler(commands=['help'])
@@ -120,7 +121,15 @@ async def bot_handle_callbacks(call):
 		else:
 			await bot.answer_callback_query(call.id, 'Still not implemented, be patient')
 			
-
+@bot.inline_handler(lambda q : True)
+async def bot_handle_inline_queries(q):
+	offset = 0 if q.offset == '' else int(q.offset)
+	
+	list, has_next = await search_tracks(offset, inline_limit, q.query)
+	res = []
+	for track in list:
+		res.append(types.InlineQueryResultAudio(f"t{track['id']}", track['audio'], track['name'], audio_duration=track['duration'], performer=track['artist_name']))
+	await bot.answer_inline_query(q.id, res, next_offset= str(offset + inline_limit) if has_next else None )
 
 async def main():
 	await create_session()
